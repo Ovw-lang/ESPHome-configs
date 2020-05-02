@@ -1,0 +1,54 @@
+esphome:
+  name: openhaard
+  platform: ESP32
+  board: nodemcu-32s
+
+wifi:
+  ssid: "IOT"
+  password: "incorrectincorrect"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Openhaard Fallback Hotspot"
+    password: "9Im2UFJdRiAz"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+web_server:
+  port: 80
+
+# Openhaard G60 Mertik
+# pin 16 pin 0 op controller
+# pin 17 pin 1 op controller
+# pin 18 pin 2 op controller
+# pin 19 pin 3 op controller
+
+switch:
+  - platform: gpio
+    name: "Safety Switch"
+    pin: 16
+    inverted: True
+    
+  - platform: gpio
+    name: "Aan"
+    pins: 16
+    pin: 17
+    inverted: True
+    
+  - platform: gpio
+    name: "PIN 2"
+    pin: 18
+    inverted: True
+    
+  - platform: gpio
+    name: "PIN 3"
+    pin: 19
+    inverted: True
