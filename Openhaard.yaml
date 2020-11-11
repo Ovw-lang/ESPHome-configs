@@ -1,0 +1,137 @@
+esphome:
+  name: openhaard
+  platform: ESP32
+  board: nodemcu-32s
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Openhaard Fallback Hotspot"
+    password: "nietgelukt"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+web_server:
+  port: 80
+
+switch:
+  - platform: gpio
+    pin: GPIO16
+    id: pin0
+    internal: yes
+    inverted: yes
+    restore_mode: ALWAYS_OFF
+  - platform: gpio
+    pin: GPIO17
+    id: pin1
+    internal: yes
+    inverted: yes
+    restore_mode: ALWAYS_OFF
+  - platform: gpio
+    pin: GPIO18
+    id: pin2
+    internal: yes
+    inverted: yes
+    restore_mode: ALWAYS_OFF
+  - platform: gpio
+    pin: GPIO19
+    id: pin3
+    internal: yes
+    inverted: yes
+    restore_mode: ALWAYS_OFF
+    
+  - platform: template
+    name: "Ontsteking"
+    icon: "mdi:fire"
+    id: ontsteking
+    lambda: |-
+      if (id(pin1).state)  {
+        return true;
+      } else {
+        return false;
+      }
+    turn_on_action:
+    - switch.turn_on: pin0
+    - switch.turn_on: pin1
+    - switch.turn_on: pin3
+    - delay: 4s
+    - switch.turn_off: pin0
+    - switch.turn_off: pin1
+    - switch.turn_off: pin3
+    
+  - platform: template
+    name: "Omhoog"
+    icon: "mdi:inbox-arrow-up"
+    id: omhoog
+    lambda: |-
+      if (id(pin0).state)  {
+        return true;
+      } else {
+        return false;
+      }
+    turn_on_action:
+    - switch.turn_on: pin0
+    - switch.turn_on: pin1
+    turn_off_action:
+    - switch.turn_off: pin0
+    - switch.turn_off: pin1
+  
+  - platform: template
+    name: "Omlaag"
+    icon: "mdi:inbox-arrow-down"
+    id: omlaag
+    lambda: |-
+      if (id(pin3).state)  {
+        return true;
+      } else {
+        return false;
+      }
+    turn_on_action:
+    - switch.turn_on: pin0
+    - switch.turn_on: pin3
+    turn_off_action:
+    - switch.turn_off: pin0
+    - switch.turn_off: pin3
+    
+  - platform: template
+    name: "Waakvlam"
+    icon: "mdi:infinity"
+    id: waakvlam
+    turn_on_action:
+    - switch.turn_on: pin0
+    - switch.turn_on: pin3
+    - delay: 12s
+    - switch.turn_off: pin0
+    - switch.turn_off: pin3
+    
+  - platform: template
+    name: "Uit (Winterstand)"
+    icon: "mdi:radiator-off"
+    id: uit
+    lambda: |-
+      if (id(pin2).state)  {
+        return true;
+      } else {
+        return false;
+      }
+    turn_on_action:
+    - switch.turn_on: pin0
+    - switch.turn_on: pin1
+    - switch.turn_on: pin2
+    - switch.turn_on: pin3
+    - delay: 1s
+    - switch.turn_off: pin0
+    - switch.turn_off: pin1
+    - switch.turn_off: pin2
+    - switch.turn_off: pin3
